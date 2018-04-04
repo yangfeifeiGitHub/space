@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.feifei.ssm.mapper.PermissionMapper">
+  <resultMap id="BaseResultMap" type="cn.feifei.ssm.domain.Permission">
+    <id column="id" property="id" />
+    <result column="name" property="name" />
+    <result column="resource" property="resource" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey">
+    delete from permission
+    where id = #{id}
+  </delete>
+  <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+    insert into permission (name, resource)
+    values (#{name}, #{resource})
+  </insert>
+  <update id="updateByPrimaryKey">
+    update permission
+    set name = #{name},
+      resource = #{resource}
+    where id = #{id}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+    select id, name, resource
+    from permission
+    where id = #{id}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, name, resource
+    from permission
+  </select>
+
+  <!--查询出所有的权限表达式-->
+  <select id="selectAllResources" resultType="string">
+    select resource from permission
+  </select>
+  <!--高级查询-->
+  <select id="queryForCount" resultType="int">
+    SELECT count(id)
+    FROM permission
+  </select>
+
+  <select id="queryForList" resultMap="BaseResultMap">
+    select id, name, resource
+    from permission
+    LIMIT #{start}, #{rows}
+  </select>
+
+  <select id="selectByRoleId" resultMap="BaseResultMap">
+    select p.* from permission p join role_permission rp on p.id=rp.permission_id
+    where rp.role_id = #{id}
+  </select>
+
+  <select id="selectByUserId" resultType="string">
+    select p.resource from permission p join role_permission rp on p.id=rp.permission_id
+    join user_role er on er.role_id=rp.role_id
+    where er.user_id=#{userId}
+  </select>
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.feifei.ssm.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="cn.feifei.ssm.domain.User">
+    <id column="id" property="id" />
+    <result column="username" property="username" />
+    <result column="password" property="password" />
+    <result column="sn" property="sn" />
+    <result column="email" property="email" />
+    <collection property="roles" ofType="Role" column="id" fetchType="eager"
+                 select="cn.feifei.ssm.mapper.RoleMapper.selectByUserId"/>
+  </resultMap>
+  <delete id="deleteByPrimaryKey">
+    delete from user
+    where id = #{id}
+  </delete>
+  <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+    insert into user (username, password, sn, email,admin)
+    values (#{username}, #{password}, #{sn}, #{email},#{admin})
+  </insert>
+  <update id="updateByPrimaryKey">
+    update user
+    set username = #{username},
+      sn = #{sn},
+      email = #{email},
+      admin = #{admin}
+    where id = #{id}
+  </update>
+
+  <!--重置密码-->
+  <update id="resetPassword">
+    update user set password = #{newPassword} where id = #{id}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+    select id, username, password, sn, email,admin
+    from user
+    where id = #{id}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, username, password, sn, email,admin
+    from user
+  </select>
+
+  <!--高级查询-->
+  <select id="queryForCount" resultType="int">
+    SELECT count(id)
+    FROM user
+    <include refid="base_where"/>
+  </select>
+
+  <select id="queryForList" resultMap="BaseResultMap">
+    select id, username, password, sn, email,admin
+    from user
+    <include refid="base_where"/>
+    LIMIT #{start}, #{rows}
+  </select>
+  <sql id="base_where">
+    <where>
+      <if test="keyword != null">
+        (username like concat('%',#{keyword},'%') or
+        sn like concat('%',#{keyword},'%'))
+      </if>
+    </where>
+  </sql>
+
+  <!--插入中间表-->
+  <insert id="insertRelation">
+    insert into user_role(user_id,role_id) values(#{userId},#{roleId})
+  </insert>
+
+  <!--打破中间表关系-->
+  <delete id="deleteRelation">
+    delete from user_role where user_id = #{id}
+  </delete>
+
+  <select id="selectByUsername" resultMap="BaseResultMap">
+    select * from user where username = #{username}
+  </select>
+
+</mapper>

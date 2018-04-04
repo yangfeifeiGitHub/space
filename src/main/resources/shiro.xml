@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+
+">
+
+	<!-- 缓存管理器 -->
+	<bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<!--设置配置文件-->
+		<property name="cacheManagerConfigFile" value="classpath:ehcache-shiro.xml"/>
+	</bean>
+	<!--凭证匹配器-->
+	<bean id="credentialsMatcher"
+		  class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+		<property name="hashAlgorithmName" value="md5" />
+		<property name="hashIterations" value="2" />
+	</bean>
+
+	<bean name="realm" class="cn.feifei.ssm.realm.MyRealm">
+		<property name="credentialsMatcher" ref="credentialsMatcher"/>
+	</bean>
+	<!--安全管理器-->
+	<bean name="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="realm"/>
+		<property name="cacheManager" ref="cacheManager"/>
+
+	</bean>
+    <bean name="myfileter" class="cn.feifei.ssm.web.filter.MyFormAuthentionToken"></bean>
+
+	<bean name="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager"/>
+		<!--登录的表单地址-->
+		<property name="loginUrl" value="/login.do"/>
+		<!--登录成功的地址-->
+		<property name="successUrl" value="/index.do"/>
+		<!--没有权限时访问的地址-->
+		<property name="unauthorizedUrl" value="/noPermission.jsp"/>
+		<!--url的权限设置-->
+		<property name="filterChainDefinitions">
+			<value>
+				/static/**=anon
+				/login.jsp=anon
+				/logout.do=logout
+				/**=authc
+			</value>
+		</property>
+        <property name="filters">
+            <map>
+                <entry key="authc" value-ref="myfileter"/>
+            </map>
+        </property>
+	</bean>
+
+	<!--开启AOP，对类进行代理-->
+	<aop:config proxy-target-class="true"/>
+
+	<!--开始shiro注解支持-->
+	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager"/>
+	</bean>
+
+</beans>
