@@ -61,7 +61,7 @@
                 value=""/> -->
         </javaClientGenerator>
         <!--domainObjectName:使用多个单词需要驼峰表示法，默认只能一个单词-->
-        <table tableName="SiteInfo" domainObjectName="SiteInfo">
+        <table tableName="LandApply" domainObjectName="LandApply">
             <property name="useActualColumnNames" value="true" />
             <!-- 参考 javaModelGenerator 的 constructorBased属性 -->
             <property name="constructorBased" value="false"/>
