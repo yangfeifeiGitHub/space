@@ -45,13 +45,13 @@ $(function () {
         save: function () {
             site_form.form("submit", {
                 url: "/siteInfo/saveOrUpdate.do",
-                onSubmit:function (param) {
+                /*onSubmit:function (param) {
                     //获取角色下拉框中的数据
                     var ids = $("#role_combobox").combobox("getValues");
                     for(var i = 0;i<ids.length;i++){
                         param["roles["+i+"].id"]=ids[i];
                     }
-                },
+                },*/
                 success: function (data) {
                     data = $.parseJSON(data);
                     if (data.success) {

@@ -2,6 +2,7 @@ package cn.feifei.ssm.web.controller;
 
 import cn.feifei.ssm.domain.SiteInfo;
 import cn.feifei.ssm.query.QueryObject;
+import cn.feifei.ssm.query.SiteInfoQueryObject;
 import cn.feifei.ssm.service.ISiteInfoService;
 import cn.feifei.ssm.util.JSONResult;
 import cn.feifei.ssm.util.PageResult;
@@ -23,10 +24,10 @@ public class SiteInfoController {
         return "siteInfo/view";
     }
 
-    @RequiresPermissions(value = {"siteInfo:list", "用户列表"}, logical = Logical.OR)
+    //@RequiresPermissions(value = {"siteInfo:list", "用户列表"}, logical = Logical.OR)
     @RequestMapping("list")
     @ResponseBody
-    public PageResult list(QueryObject qo){
+    public PageResult list(SiteInfoQueryObject qo){
         PageResult siteInfos = siteInfoService.query(qo);
         return siteInfos;
     }
